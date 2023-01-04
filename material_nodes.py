@@ -38,6 +38,7 @@ node_categories = [
         NodeItem("CustomNodeTypeSubstrate"),
         NodeItem("CustomNodeTypePlastic"),
         NodeItem("CustomNodeTypeBlackBody"),
+        NodeItem("CustomNodeTypeDiffuseLight"),
         NodeItem("CustomNodeTypeMedium"),
         NodeItem("CustomNodeTypeTranslucent"),
         ]),
@@ -312,8 +313,8 @@ class PbrtMetal(Node, MyCustomTreeNode):
     uRoughness : bpy.props.FloatProperty(default=0.0, min=0.0, max=1.0)
     vRoughness : bpy.props.FloatProperty(default=0.0, min=0.0, max=1.0)
     bump : bpy.props.FloatProperty(default=0.0, min=0.0, max=1.0)
-    kt : bpy.props.FloatVectorProperty(name="Kt", description="Kt",default=(0.8, 0.8, 0.8, 1.0), min=0, max=1, subtype='COLOR', size=4,update=updateViewportColor)
-    eta : bpy.props.FloatVectorProperty(name="Eta", description="Eta",default=(0.8, 0.8, 0.8, 1.0), min=0, max=1, subtype='COLOR', size=4)
+    kt : bpy.props.FloatVectorProperty(name="Kt", description="Kt",default=(0.8, 0.8, 0.8, 1.0), min=0, max=10, subtype='COLOR', size=4,update=updateViewportColor)
+    eta : bpy.props.FloatVectorProperty(name="Eta", description="Eta",default=(0.8, 0.8, 0.8, 1.0), min=0, max=10, subtype='COLOR', size=4)
 
     def init(self, context):
         self.outputs.new('NodeSocketFloat', "Pbrt Metal")
@@ -680,6 +681,38 @@ class PbrtBlackBody(Node, MyCustomTreeNode):
         
     def draw_label(self):
         return "Pbrt BlackBody"
+        
+class PbrtDiffuseLight(Node, MyCustomTreeNode):
+    '''A custom node'''
+    bl_idname = 'CustomNodeTypeDiffuseLight'
+    bl_label = 'Pbrt DiffuseLight'
+    bl_icon = 'INFO'
+
+    def update_value(self, context):
+        self.update ()
+
+    def updateViewportColor(self,context):
+        mat = bpy.context.active_object.active_material
+        if mat is not None:
+            bpy.data.materials[mat.name].diffuse_color=self.L
+
+    L : bpy.props.FloatVectorProperty(name="L", description="L",default=(0.8, 0.8, 0.8, 1.0), min=0, max=1, subtype='COLOR', size=4,update=updateViewportColor)
+    Scale : bpy.props.FloatProperty(default=0.0, min=0.0, max=255.0)
+
+    def init(self, context):
+        self.outputs.new('NodeSocketFloat', "Pbrt DiffuseLight")
+
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "L",text = 'L')
+        layout.prop(self, "Scale",text = 'Scale')
+
+        
+    def draw_label(self):
+        return "Pbrt DiffuseLight"
+
+
+
 
 
 class PbrtTranslucent(Node, MyCustomTreeNode):

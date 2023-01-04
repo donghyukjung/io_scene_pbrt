@@ -136,7 +136,7 @@ def measure(first, second):
     return distance
 
 def export_spot_lights(pbrt_file, scene):
-    for ob in objects_in_render(scene):
+    for ob in scene.objects:
             print('OB TYPE: ' + ob.type)
             if ob.type == "LIGHT" :
                 la = ob.data
@@ -157,7 +157,7 @@ def export_spot_lights(pbrt_file, scene):
     return ''
 
 def export_point_lights(pbrt_file, scene):
-    for object in objects_in_render(scene):
+    for object in scene.objects:
             if object.type == "LIGHT" :
                 la = object.data
                 print('Light type: ' + la.type)
@@ -539,7 +539,7 @@ def export_pbrt_translucent_material(pbrt_file, mat):
     print('Currently exporting Pbrt Translucent material')
     print (mat.name)
 
-    nodes = mat.node_tree.nodes
+    # nodes = mat.node_tree.nodes
     kdTextureName = ""
     kdTextureName = export_texture_from_input(pbrt_file,mat.inputs[0],mat, False)
     ksTextureName = ""
@@ -1030,6 +1030,18 @@ def export_pbrt_blackbody_material (pbrt_file, mat):
     pbrt_file.write("\n")
     return ''
 
+def export_pbrt_diffuselight_material (pbrt_file, mat):
+    print('Currently exporting Pbrt BlackBody material')
+    print (mat.name)
+
+
+
+    pbrt_file.write(r'AreaLightSource "diffuse" "rgb L" [%f %f %f ' %(mat.L[0]*mat.Scale,mat.L[1]*mat.Scale,mat.L[2]*mat.Scale))
+    pbrt_file.write(r'] ')
+    pbrt_file.write("\n")
+    return ''
+
+
 def hastexturenewcode(mat, slotname):
     foundTex = False
     print ("checking texture for : ")
@@ -1186,6 +1198,8 @@ def export_material(pbrt_file, object, slotIndex):
                             export_pbrt_plastic_material(pbrt_file,currentMaterial)
                         if currentMaterial.bl_idname == 'CustomNodeTypeBlackBody':
                             export_pbrt_blackbody_material(pbrt_file,currentMaterial)
+                        if currentMaterial.bl_idname == 'CustomNodeTypeDiffuseLight':
+                            export_pbrt_diffuselight_material(pbrt_file,currentMaterial)
                         #TODO: Medium needs to be fixed.. This is not to be called here, it's fetched from the slot directly in the material 
                         # that supports medium.
                         #if currentMaterial.bl_idname == 'CustomNodeTypeMedium':
@@ -1219,7 +1233,7 @@ def export_geometry(pbrt_file, scene, frameNumber):
     # https://docs.blender.org/api/current/bpy.types.MeshLoopTriangle.html
     # https://wiki.blender.org/wiki/Reference/Release_Notes/2.80/Python_API/Mesh_API
 
-    for object in objects_in_render(scene):
+    for object in scene.objects:
         print("exporting:")
         print(object.name)
 

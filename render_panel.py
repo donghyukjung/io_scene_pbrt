@@ -211,8 +211,8 @@ def register():
     bpy.types.Scene.spp = bpy.props.IntProperty(name = "Samples per pixel", description = "Set spp", default = 100, min = 1, max = 9999)
     bpy.types.Scene.maxdepth = bpy.props.IntProperty(name = "Max depth", description = "Set max depth", default = 10, min = 1, max = 9999)
 
-    integrators = [("path", "path", "", 1), ("volpath", "volpath", "", 2),("bdpt", "bdpt", "", 3),("mlt", "mlt", "", 4),("sppm", "sppm", "", 5)]
-    bpy.types.Scene.integrators = bpy.props.EnumProperty(name = "Name", items=integrators , default="path")
+    integrators = [("path", "path", "", 1), ("volpath", "volpath", "", 2),("bdpt", "bdpt", "", 3),("mlt", "mlt", "", 4),("sppm", "sppm", "", 5),("voxel", "voxel", "", 6)]
+    bpy.types.Scene.integrators = bpy.props.EnumProperty(name = "Name", items=integrators , default="voxel")
 
     lightsamplestrategy = [("uniform", "uniform", "", 1), ("power", "power", "", 2), ("spatial", "spatial", "", 3)]
     bpy.types.Scene.lightsamplestrategy = bpy.props.EnumProperty(name = "lightsamplestrategy", items=lightsamplestrategy , default="spatial")
